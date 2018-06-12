@@ -12,7 +12,7 @@ export {
                  notice::MaliciousTLD
       };
 
-const malicous_tld =
+const malicious_tld =
           /\.men$/
           |/\.gdn$/
           |/\.work$/
@@ -26,11 +26,21 @@ const malicous_tld =
 &redef;
 }
 
+event http_request (c: connection, method: string, original_URI: string, unescaped_URI: string, version: string) &priority=5
+        {
+        if ( malicious_tld in unescaped_URI )
+                {
+                NOTICE([$note=notice::MaliciousTLD,
+                $conn=c,
+                $msg=fmt("%s sent a http request to (%s), which is listed as a potentially malicious TLD. URI is (%s)", c$id$orig_h, c$id$resp_h, unescaped_URI),
+                $sub=fmt("Severity: 1.0"),
+                $identifier=cat(c$id$orig_h)]);
+                }
+        }
 
 event dns_query_reply(c: connection, msg: dns_msg, query: string, qtype: count, qclass: count)
                 {
-
-        if ( malicous_tld in query )
+        if ( malicious_tld in query )
                           {
                           NOTICE([$note=notice::MaliciousTLD,
                           $conn=c,

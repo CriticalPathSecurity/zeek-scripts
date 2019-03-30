@@ -175,7 +175,7 @@ event bad_arp(SPA: addr, SHA: string, TPA: addr, THA: string, explanation: strin
 
 event arp_reply(mac_src: string, mac_dst: string, SPA: addr, SHA: string, TPA: addr, THA: string)
 {
-    if ( shadowhammermac in mac_dst  )
+    if ( shadowhammermac in mac_src  )
     {
     NOTICE([$note=ShadowHammer, $src=SPA,
             $msg=fmt("ShadowHammer %s(%s) ? %s(%s)", SPA, SHA, TPA, THA)]);
